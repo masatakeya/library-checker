@@ -674,11 +674,12 @@
       <button class="modal-cancel" onclick="closeSettings()">キャンセル</button>
       <div class="modal-note">
         APIキーは <a href="https://calil.jp/api/dashboard/" target="_blank">calil.jp/api/dashboard/</a> で無料取得できます。<br>
-        キーはこのデバイスのブラウザ（localStorage）にのみ保存され、外部には送信されません。
+        個別に設定したキーはこのデバイスのブラウザにのみ保存されます。（※config.jsに標準キーが設定されている場合は入力不要です）
       </div>
     </div>
   </div>
 
+  <script src="config.js"></script>
   <script>
     // ============================================================
     // STATE
@@ -692,7 +693,8 @@
     // INIT
     // ============================================================
     function init() {
-      appkey = localStorage.getItem('calil_appkey') || '';
+      // localStorageを優先し、なければ config.js (もしあれば) の値をフォールバックにする
+      appkey = localStorage.getItem('calil_appkey') || (typeof CONFIG !== 'undefined' ? CONFIG.CALIL_API_KEY : '');
       history = JSON.parse(localStorage.getItem('calil_history') || '[]');
 
       if (!appkey) {
