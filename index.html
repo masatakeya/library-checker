@@ -642,6 +642,12 @@
           onkeydown="if(event.key==='Enter') searchLibraries()">
         <button class="btn btn-amber" onclick="searchLibraries()" id="libBtn">検索</button>
       </div>
+      <div style="margin-top: 0.6rem; text-align: right;">
+        <label style="cursor:pointer; color: var(--text-muted); font-size: 0.78rem; display: inline-flex; align-items: center; gap: 0.35rem;">
+          <input type="checkbox" id="includeUniv" style="cursor:pointer;">
+          大学・専門機関を含める
+        </label>
+      </div>
 
       <div id="libResults"></div>
     </div>
@@ -940,14 +946,21 @@
 
         const libs = await jsonp(url);
 
-        if (!libs || !libs.length) {
-          libEl.innerHTML = '<div class="error-msg">図書館が見つかりませんでした。<br>都道府県名と市区町村名を正確に入力してください。<br>例：「東京都練馬区」「東京都調布市」「京都府京都市」</div>';
+        const includeUniv = document.getElementById('includeUniv') && document.getElementById('includeUniv').checked;
+        const filteredLibs = libs ? libs.filter(lib => {
+          if (includeUniv) return true;
+          // 公共図書館カテゴリのみを残す (UNIV, SPECIAL を除外)
+          return ['LARGE', 'MEDIUM', 'SMALL', 'BM'].includes(lib.category);
+        }) : [];
+
+        if (!filteredLibs.length) {
+          libEl.innerHTML = '<div class="error-msg">対象の図書館が見つかりませんでした。<br>地域名を変えるか、「大学・専門機関を含める」にチェックを入れてください。</div>';
           return;
         }
 
         // システムIDでグループ化
         const systems = {};
-        libs.forEach(lib => {
+        filteredLibs.forEach(lib => {
           if (!systems[lib.systemid]) {
             systems[lib.systemid] = { systemid: lib.systemid, name: lib.systemname };
           }
