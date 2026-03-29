@@ -593,7 +593,6 @@
         <div class="app-title">📚 図書館蔵書チェッカー</div>
         <div class="app-sub">POWERED BY CALIL API</div>
       </div>
-      <button class="settings-btn" onclick="openSettings()">⚙ APIキー設定</button>
     </div>
   </header>
 
@@ -602,8 +601,8 @@
 
     <!-- API Key Warning -->
     <div class="warn-msg" id="apiKeyWarning" style="display:none;">
-      ⚠️ カーリルAPIキーが未設定です。<br>
-      右上の「APIキー設定」から登録してください。<br>
+      ⚠️ カーリルAPIキーが未設定のため、システムをご利用いただけません。<br>
+      ルートディレクトリにある「<strong>config.js</strong>」をテキストエディタで開き、APIキーを貼り付けて保存してください。<br>
       <a href="https://calil.jp/api/dashboard/" target="_blank">APIキーの無料取得はこちら →</a>
     </div>
 
@@ -664,21 +663,6 @@
 
   </main>
 
-  <!-- SETTINGS MODAL -->
-  <div class="overlay" id="settingsOverlay">
-    <div class="modal">
-      <div class="modal-title">⚙ APIキー設定</div>
-      <div class="modal-label">カーリル APIキー</div>
-      <input type="text" class="modal-field" id="apiKeyInput" placeholder="APIキーを入力してください">
-      <button class="modal-btn" onclick="saveSettings()">保存して閉じる</button>
-      <button class="modal-cancel" onclick="closeSettings()">キャンセル</button>
-      <div class="modal-note">
-        APIキーは <a href="https://calil.jp/api/dashboard/" target="_blank">calil.jp/api/dashboard/</a> で無料取得できます。<br>
-        個別に設定したキーはこのデバイスのブラウザにのみ保存されます。（※config.jsに標準キーが設定されている場合は入力不要です）
-      </div>
-    </div>
-  </div>
-
   <script src="config.js"></script>
   <script>
     // ============================================================
@@ -701,26 +685,6 @@
         document.getElementById('apiKeyWarning').style.display = 'block';
       }
       renderHistory();
-    }
-
-    // ============================================================
-    // SETTINGS
-    // ============================================================
-    function openSettings() {
-      document.getElementById('apiKeyInput').value = appkey;
-      document.getElementById('settingsOverlay').classList.add('open');
-    }
-
-    function closeSettings() {
-      document.getElementById('settingsOverlay').classList.remove('open');
-    }
-
-    function saveSettings() {
-      const val = document.getElementById('apiKeyInput').value.trim();
-      appkey = val;
-      localStorage.setItem('calil_appkey', appkey);
-      document.getElementById('apiKeyWarning').style.display = appkey ? 'none' : 'block';
-      closeSettings();
     }
 
     // ============================================================
@@ -924,7 +888,7 @@
 
     async function searchLibraries() {
       if (!selectedBook) { alert('先に本を選んでください。'); return; }
-      if (!appkey) { openSettings(); return; }
+      if (!appkey) { alert('APIキーが未設定です。\nconfig.js をご確認の上、APIキーを設定してください。'); return; }
 
       const input = document.getElementById('cityInput').value.trim();
       if (!input) return;
