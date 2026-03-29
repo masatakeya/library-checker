@@ -1,1 +1,0 @@
-cb({"session": "fc11c133010d0ad89dd7e4077be3d444f4717eed67f0aff973a038303c14b474", "continue": 0, "books": {"9784832271508": {"Tokyo_Minato": {"status": "Cache", "libkey": {}, "reserveurl": ""}}}, "notice": "現在の応答はJSONP形式で非推奨です。JSON形式はcallbackパラメータにnoを指定してください。"});

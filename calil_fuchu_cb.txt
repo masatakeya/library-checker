@@ -1,1 +1,0 @@
-cb({"session": "9ee82c963a24f26b375c3e0ab6c4a9e9519b8ccfe70afd369ca935dac8d8e133", "continue": 0, "books": {"9784806715559": {"Tokyo_Fuchu": {"status": "Cache", "libkey": {}, "reserveurl": ""}}}, "notice": "現在の応答はJSONP形式で非推奨です。JSON形式はcallbackパラメータにnoを指定してください。"});

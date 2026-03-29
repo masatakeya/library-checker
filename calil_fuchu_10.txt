@@ -1,1 +1,0 @@
-callback({"session": "e7ca2f3a9f44560db7fbb78a8db901f5b4bf7babdca7e9e69345ef949935bdef", "continue": 0, "books": {"4806715557": {"Tokyo_Fuchu": {"status": "Cache", "libkey": {}, "reserveurl": ""}}}, "notice": "現在の応答はJSONP形式で非推奨です。JSON形式はcallbackパラメータにnoを指定してください。"});
