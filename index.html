@@ -861,34 +861,32 @@
     }
 
     // ============================================================
-    // JSONP ユーティリティ（file:// でも動作）
+    // API 呼び出し（CORS対応 Fetch に移行することでJSONP非推奨警告を解消）
     // ============================================================
-    let _jsonpCounter = 0;
+    async function fetchCalil(url) {
+      const targetUrl = url + (url.includes('?') ? '&' : '?') + 'callback=no';
+      const controller = new AbortController();
+      const timer = setTimeout(() => controller.abort(), 15000);
+      try {
+        const res = await fetch(targetUrl, { signal: controller.signal });
+        if (!res.ok) throw new Error(`APIエラー: ${res.status}`);
+        return await res.json();
+      } catch (err) {
+        if (err.name === 'AbortError') throw new Error('通信タイムアウト');
+        throw err;
+      } finally {
+        clearTimeout(timer);
+      }
+    }
 
-    function jsonp(url) {
-      return new Promise((resolve, reject) => {
-        const cbName = `_calilCb${_jsonpCounter++}`;
-        const script = document.createElement('script');
-        const timer = setTimeout(() => {
-          cleanup();
-          reject(new Error('JSONP timeout'));
-        }, 15000);
-
-        function cleanup() {
-          clearTimeout(timer);
-          delete window[cbName];
-          if (script.parentNode) script.parentNode.removeChild(script);
-        }
-
-        window[cbName] = (data) => {
-          cleanup();
-          resolve(data);
-        };
-
-        script.src = url + (url.includes('?') ? '&' : '?') + `callback=${cbName}`;
-        script.onerror = () => { cleanup(); reject(new Error('JSONP読み込み失敗')); };
-        document.head.appendChild(script);
-      });
+    // ISBN-13 を ISBN-10 に変換（古いOPACシステムのヒット率向上のため）
+    function toISBN10(isbn13) {
+      if (!isbn13 || isbn13.length !== 13 || !isbn13.startsWith('978')) return null;
+      const base = isbn13.substring(3, 12);
+      let sum = 0;
+      for (let i = 0; i < 9; i++) sum += parseInt(base[i]) * (10 - i);
+      const check = (11 - (sum % 11)) % 11;
+      return base + (check === 10 ? 'X' : check.toString());
     }
 
     // ============================================================
@@ -944,7 +942,7 @@
         if (pref) url += `&pref=${encodeURIComponent(pref)}`;
         if (city) url += `&city=${encodeURIComponent(city)}`;
 
-        const libs = await jsonp(url);
+        const libs = await fetchCalil(url);
 
         const includeUniv = document.getElementById('includeUniv') && document.getElementById('includeUniv').checked;
         const filteredLibs = libs ? libs.filter(lib => {
@@ -988,7 +986,9 @@
 
         // 蔵書確認
         const systemids = systemList.map(s => s.systemid).join(',');
-        await checkAvailability(selectedBook.isbn, systemids, systemList);
+        const isbn10 = toISBN10(selectedBook.isbn);
+        const searchIsbns = isbn10 ? `${selectedBook.isbn},${isbn10}` : selectedBook.isbn;
+        await checkAvailability(searchIsbns, systemids, systemList);
 
       } catch (err) {
         libEl.innerHTML = `<div class="error-msg">エラー: ${esc(err.message)}<br>APIキーが正しいか確認してください。</div>`;
@@ -1015,14 +1015,14 @@
 
       try {
         let url = `https://api.calil.jp/check?appkey=${appkey}&format=json&isbn=${isbn}&systemid=${encodeURIComponent(systemids)}`;
-        let data = await jsonp(url);
+        let data = await fetchCalil(url);
         let tries = 0;
 
         while (data.continue === 1 && tries < 12) {
           await sleep(2500);
           el.innerHTML = `<div class="message"><span class="spinner"></span>照会中… (${tries + 1}/12)</div>`;
           const pollUrl = `https://api.calil.jp/check?appkey=${appkey}&format=json&session=${data.session}`;
-          data = await jsonp(pollUrl);
+          data = await fetchCalil(pollUrl);
           tries++;
         }
 
@@ -1036,26 +1036,41 @@
     function renderAvailability(data, systemList) {
       const el = document.getElementById('availResults');
       const books = data.books || {};
-      // ISBNキーは確認済みの本のもの
-      const isbnKey = Object.keys(books)[0];
-      const isbnData = isbnKey ? books[isbnKey] : {};
 
       el.innerHTML = '';
 
       let anyResult = false;
 
       systemList.forEach(sys => {
-        const sysData = isbnData[sys.systemid];
-        if (!sysData) return;
+        // 古いOPAC対策として、送信した複数のISBN（10桁/13桁）から結果を統合する
+        let status = 'No';
+        let libkeys = {};
+        let reserveUrl = '';
+        let hasData = false;
+        
+        Object.values(books).forEach(isbnData => {
+          const sysData = isbnData[sys.systemid];
+          if (!sysData) return;
+          anyResult = true;
+          hasData = true;
+          
+          if (sysData.status === 'Error' && status === 'No') status = 'Error';
+          // Cache または OK ならエラーではない
+          if ((sysData.status === 'OK' || sysData.status === 'Cache') && status !== 'Running') status = 'Cache';
+          // Polling中は優先的にRunning扱いにする
+          if (sysData.status === 'Running') status = 'Running';
 
-        anyResult = true;
+          if (sysData.libkey && Object.keys(sysData.libkey).length > 0) {
+            Object.assign(libkeys, sysData.libkey);
+            if (sysData.reserveurl) reserveUrl = sysData.reserveurl;
+            status = 'Cache'; // 蔵書が見つかれば成功状態
+          }
+        });
+
+        if (!hasData) return;
 
         const block = document.createElement('div');
         block.className = 'sys-block';
-
-        const status = sysData.status;
-        const libkeys = sysData.libkey || {};
-        const reserveUrl = sysData.reserveurl || '';
 
         let bodyHtml = '';
 
