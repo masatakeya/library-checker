@@ -1,11 +1,14 @@
 <!DOCTYPE html>
 <html lang="ja">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
   <title>図書館蔵書チェッカー</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@400;700&family=Noto+Sans+JP:wght@300;400;500&display=swap" rel="stylesheet">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@400;700&family=Noto+Sans+JP:wght@300;400;500&display=swap"
+    rel="stylesheet">
   <style>
     :root {
       --bg: #f3ede1;
@@ -25,7 +28,11 @@
       --warning-bg: #fff0cc;
     }
 
-    * { box-sizing: border-box; margin: 0; padding: 0; }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
 
     body {
       font-family: 'Noto Sans JP', sans-serif;
@@ -42,7 +49,7 @@
       position: sticky;
       top: 0;
       z-index: 100;
-      box-shadow: 0 3px 14px rgba(10,20,40,0.35);
+      box-shadow: 0 3px 14px rgba(10, 20, 40, 0.35);
     }
 
     .header-inner {
@@ -64,15 +71,15 @@
 
     .app-sub {
       font-size: 0.65rem;
-      color: rgba(255,255,255,0.5);
+      color: rgba(255, 255, 255, 0.5);
       letter-spacing: 0.1em;
       margin-top: 3px;
     }
 
     .settings-btn {
-      background: rgba(255,255,255,0.1);
-      border: 1px solid rgba(255,255,255,0.22);
-      color: rgba(255,255,255,0.85);
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.22);
+      color: rgba(255, 255, 255, 0.85);
       padding: 0.42rem 0.85rem;
       border-radius: 7px;
       font-size: 0.78rem;
@@ -81,7 +88,10 @@
       transition: background 0.2s;
       white-space: nowrap;
     }
-    .settings-btn:hover { background: rgba(255,255,255,0.18); }
+
+    .settings-btn:hover {
+      background: rgba(255, 255, 255, 0.18);
+    }
 
     /* ===== MAIN ===== */
     .main {
@@ -97,7 +107,7 @@
       border-radius: 14px;
       padding: 1.2rem;
       margin-bottom: 1.1rem;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.045);
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.045);
     }
 
     .card-label {
@@ -172,7 +182,7 @@
     .field:focus {
       outline: none;
       border-color: var(--navy-light);
-      box-shadow: 0 0 0 3px rgba(46,65,117,0.1);
+      box-shadow: 0 0 0 3px rgba(46, 65, 117, 0.1);
     }
 
     .btn {
@@ -191,9 +201,20 @@
       background: var(--amber);
       color: #fff;
     }
-    .btn-amber:hover { background: var(--amber-light); }
-    .btn-amber:active { transform: scale(0.97); }
-    .btn-amber:disabled { opacity: 0.45; cursor: not-allowed; transform: none; }
+
+    .btn-amber:hover {
+      background: var(--amber-light);
+    }
+
+    .btn-amber:active {
+      transform: scale(0.97);
+    }
+
+    .btn-amber:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+      transform: none;
+    }
 
     /* ===== BOOK LIST ===== */
     .book-list {
@@ -215,12 +236,25 @@
       gap: 0.75rem;
     }
 
-    .book-card:hover { border-color: var(--navy-light); background: #f4f7ff; }
-    .book-card.selected { border-color: var(--navy); background: #eef2fc; }
+    .book-card:hover {
+      border-color: var(--navy-light);
+      background: #f4f7ff;
+    }
 
-    .book-icon { font-size: 1.4rem; flex-shrink: 0; }
+    .book-card.selected {
+      border-color: var(--navy);
+      background: #eef2fc;
+    }
 
-    .book-info { flex: 1; min-width: 0; }
+    .book-icon {
+      font-size: 1.4rem;
+      flex-shrink: 0;
+    }
+
+    .book-info {
+      flex: 1;
+      min-width: 0;
+    }
 
     .book-title {
       font-size: 0.88rem;
@@ -272,7 +306,11 @@
       font-family: 'Noto Sans JP', sans-serif;
     }
 
-    .chip:hover { background: var(--navy); color: #fff; border-color: var(--navy); }
+    .chip:hover {
+      background: var(--navy);
+      color: #fff;
+      border-color: var(--navy);
+    }
 
     /* ===== AVAILABILITY ===== */
     .selected-book-info {
@@ -290,8 +328,14 @@
       padding: 0.85rem 0;
     }
 
-    .sys-block:first-child { padding-top: 0; }
-    .sys-block:last-child { border-bottom: none; padding-bottom: 0; }
+    .sys-block:first-child {
+      padding-top: 0;
+    }
+
+    .sys-block:last-child {
+      border-bottom: none;
+      padding-bottom: 0;
+    }
 
     .sys-name {
       font-size: 0.9rem;
@@ -324,10 +368,25 @@
       white-space: nowrap;
     }
 
-    .badge-ok { background: var(--success-bg); color: var(--success); }
-    .badge-out { background: var(--danger-bg); color: var(--danger); }
-    .badge-none { background: #f0eee8; color: var(--text-muted); }
-    .badge-other { background: var(--warning-bg); color: var(--warning); }
+    .badge-ok {
+      background: var(--success-bg);
+      color: var(--success);
+    }
+
+    .badge-out {
+      background: var(--danger-bg);
+      color: var(--danger);
+    }
+
+    .badge-none {
+      background: #f0eee8;
+      color: var(--text-muted);
+    }
+
+    .badge-other {
+      background: var(--warning-bg);
+      color: var(--warning);
+    }
 
     .reserve-link {
       display: inline-block;
@@ -336,7 +395,10 @@
       color: var(--amber);
       text-decoration: none;
     }
-    .reserve-link:hover { text-decoration: underline; }
+
+    .reserve-link:hover {
+      text-decoration: underline;
+    }
 
     /* ===== UTILITIES ===== */
     .message {
@@ -367,7 +429,9 @@
       line-height: 1.65;
     }
 
-    .warn-msg a { color: var(--amber); }
+    .warn-msg a {
+      color: var(--amber);
+    }
 
     /* ===== SPINNER ===== */
     .spinner {
@@ -382,7 +446,11 @@
       margin-right: 0.4rem;
     }
 
-    @keyframes spin { to { transform: rotate(360deg); } }
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
 
     /* ===== STEP INDICATOR ===== */
     .step-dot {
@@ -398,15 +466,26 @@
       flex-shrink: 0;
     }
 
-    .step-dot-active { background: var(--amber); color: #fff; }
-    .step-dot-done { background: var(--success); color: #fff; }
-    .step-dot-idle { background: var(--border); color: var(--text-muted); }
+    .step-dot-active {
+      background: var(--amber);
+      color: #fff;
+    }
+
+    .step-dot-done {
+      background: var(--success);
+      color: #fff;
+    }
+
+    .step-dot-idle {
+      background: var(--border);
+      color: var(--text-muted);
+    }
 
     /* ===== MODAL ===== */
     .overlay {
       position: fixed;
       inset: 0;
-      background: rgba(10,20,40,0.55);
+      background: rgba(10, 20, 40, 0.55);
       z-index: 200;
       display: none;
       align-items: center;
@@ -414,7 +493,9 @@
       padding: 1rem;
     }
 
-    .overlay.open { display: flex; }
+    .overlay.open {
+      display: flex;
+    }
 
     .modal {
       background: var(--surface);
@@ -422,7 +503,7 @@
       padding: 1.6rem;
       width: 100%;
       max-width: 400px;
-      box-shadow: 0 8px 32px rgba(0,0,0,0.18);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.18);
     }
 
     .modal-title {
@@ -468,7 +549,9 @@
       transition: background 0.2s;
     }
 
-    .modal-btn:hover { background: var(--navy-light); }
+    .modal-btn:hover {
+      background: var(--navy-light);
+    }
 
     .modal-cancel {
       width: 100%;
@@ -490,245 +573,248 @@
       line-height: 1.65;
     }
 
-    .modal-note a { color: var(--amber); }
+    .modal-note a {
+      color: var(--amber);
+    }
 
     /* スクロール時にヘッダーの下に移動 */
-    html { scroll-behavior: smooth; }
+    html {
+      scroll-behavior: smooth;
+    }
   </style>
 </head>
+
 <body>
 
-<!-- HEADER -->
-<header class="header">
-  <div class="header-inner">
-    <div>
-      <div class="app-title">📚 図書館蔵書チェッカー</div>
-      <div class="app-sub">POWERED BY CALIL API</div>
+  <!-- HEADER -->
+  <header class="header">
+    <div class="header-inner">
+      <div>
+        <div class="app-title">📚 図書館蔵書チェッカー</div>
+        <div class="app-sub">POWERED BY CALIL API</div>
+      </div>
+      <button class="settings-btn" onclick="openSettings()">⚙ APIキー設定</button>
     </div>
-    <button class="settings-btn" onclick="openSettings()">⚙ APIキー設定</button>
+  </header>
+
+  <!-- MAIN -->
+  <main class="main">
+
+    <!-- API Key Warning -->
+    <div class="warn-msg" id="apiKeyWarning" style="display:none;">
+      ⚠️ カーリルAPIキーが未設定です。<br>
+      右上の「APIキー設定」から登録してください。<br>
+      <a href="https://calil.jp/api/dashboard/" target="_blank">APIキーの無料取得はこちら →</a>
+    </div>
+
+    <!-- STEP 1: 本を探す -->
+    <div class="card" id="step1Card">
+      <div class="card-label">
+        <span class="step-dot step-dot-active" id="dot1">1</span>
+        本を探す
+      </div>
+
+      <div class="tabs">
+        <button class="tab active" id="tabTitle" onclick="switchTab('title')">タイトル・著者名</button>
+        <button class="tab" id="tabISBN" onclick="switchTab('isbn')">ISBN</button>
+      </div>
+
+      <div class="input-row">
+        <input type="text" class="field" id="searchInput" placeholder="書名・著者名を入力"
+          onkeydown="if(event.key==='Enter') searchBooks()">
+        <button class="btn btn-amber" onclick="searchBooks()" id="searchBtn">検索</button>
+      </div>
+
+      <div id="bookResults"></div>
+    </div>
+
+    <!-- STEP 2: 図書館を選ぶ -->
+    <div class="card" id="step2Card" style="display:none;">
+      <div class="card-label">
+        <span class="step-dot step-dot-active" id="dot2">2</span>
+        図書館を選ぶ
+      </div>
+
+      <div id="historyArea"></div>
+
+      <div class="input-row">
+        <input type="text" class="field" id="cityInput" placeholder="都道府県 市区町村（例：東京都 練馬区）"
+          onkeydown="if(event.key==='Enter') searchLibraries()">
+        <button class="btn btn-amber" onclick="searchLibraries()" id="libBtn">検索</button>
+      </div>
+
+      <div id="libResults"></div>
+    </div>
+
+    <!-- STEP 3: 蔵書状況 -->
+    <div class="card" id="step3Card" style="display:none;">
+      <div class="card-label">
+        <span class="step-dot step-dot-active" id="dot3">3</span>
+        蔵書状況
+      </div>
+      <div class="selected-book-info" id="selectedBookBanner"></div>
+      <div id="availResults"></div>
+    </div>
+
+  </main>
+
+  <!-- SETTINGS MODAL -->
+  <div class="overlay" id="settingsOverlay">
+    <div class="modal">
+      <div class="modal-title">⚙ APIキー設定</div>
+      <div class="modal-label">カーリル APIキー</div>
+      <input type="text" class="modal-field" id="apiKeyInput" placeholder="APIキーを入力してください">
+      <button class="modal-btn" onclick="saveSettings()">保存して閉じる</button>
+      <button class="modal-cancel" onclick="closeSettings()">キャンセル</button>
+      <div class="modal-note">
+        APIキーは <a href="https://calil.jp/api/dashboard/" target="_blank">calil.jp/api/dashboard/</a> で無料取得できます。<br>
+        キーはこのデバイスのブラウザ（localStorage）にのみ保存され、外部には送信されません。
+      </div>
+    </div>
   </div>
-</header>
 
-<!-- MAIN -->
-<main class="main">
+  <script>
+    // ============================================================
+    // STATE
+    // ============================================================
+    let appkey = '';
+    let searchMode = 'title';
+    let selectedBook = null;   // { title, author, publisher, year, isbn }
+    let history = [];          // [{ pref, city }, ...] 最大3件
 
-  <!-- API Key Warning -->
-  <div class="warn-msg" id="apiKeyWarning" style="display:none;">
-    ⚠️ カーリルAPIキーが未設定です。<br>
-    右上の「APIキー設定」から登録してください。<br>
-    <a href="https://calil.jp/api/dashboard/" target="_blank">APIキーの無料取得はこちら →</a>
-  </div>
+    // ============================================================
+    // INIT
+    // ============================================================
+    function init() {
+      appkey = localStorage.getItem('calil_appkey') || '';
+      history = JSON.parse(localStorage.getItem('calil_history') || '[]');
 
-  <!-- STEP 1: 本を探す -->
-  <div class="card" id="step1Card">
-    <div class="card-label">
-      <span class="step-dot step-dot-active" id="dot1">1</span>
-      本を探す
-    </div>
-
-    <div class="tabs">
-      <button class="tab active" id="tabTitle" onclick="switchTab('title')">タイトル・著者名</button>
-      <button class="tab" id="tabISBN" onclick="switchTab('isbn')">ISBN</button>
-    </div>
-
-    <div class="input-row">
-      <input type="text" class="field" id="searchInput"
-             placeholder="書名・著者名を入力"
-             onkeydown="if(event.key==='Enter') searchBooks()">
-      <button class="btn btn-amber" onclick="searchBooks()" id="searchBtn">検索</button>
-    </div>
-
-    <div id="bookResults"></div>
-  </div>
-
-  <!-- STEP 2: 図書館を選ぶ -->
-  <div class="card" id="step2Card" style="display:none;">
-    <div class="card-label">
-      <span class="step-dot step-dot-active" id="dot2">2</span>
-      図書館を選ぶ
-    </div>
-
-    <div id="historyArea"></div>
-
-    <div class="input-row">
-      <input type="text" class="field" id="cityInput"
-             placeholder="都道府県 市区町村（例：東京都 練馬区）"
-             onkeydown="if(event.key==='Enter') searchLibraries()">
-      <button class="btn btn-amber" onclick="searchLibraries()" id="libBtn">検索</button>
-    </div>
-
-    <div id="libResults"></div>
-  </div>
-
-  <!-- STEP 3: 蔵書状況 -->
-  <div class="card" id="step3Card" style="display:none;">
-    <div class="card-label">
-      <span class="step-dot step-dot-active" id="dot3">3</span>
-      蔵書状況
-    </div>
-    <div class="selected-book-info" id="selectedBookBanner"></div>
-    <div id="availResults"></div>
-  </div>
-
-</main>
-
-<!-- SETTINGS MODAL -->
-<div class="overlay" id="settingsOverlay">
-  <div class="modal">
-    <div class="modal-title">⚙ APIキー設定</div>
-    <div class="modal-label">カーリル APIキー</div>
-    <input type="text" class="modal-field" id="apiKeyInput" placeholder="APIキーを入力してください">
-    <button class="modal-btn" onclick="saveSettings()">保存して閉じる</button>
-    <button class="modal-cancel" onclick="closeSettings()">キャンセル</button>
-    <div class="modal-note">
-      APIキーは <a href="https://calil.jp/api/dashboard/" target="_blank">calil.jp/api/dashboard/</a> で無料取得できます。<br>
-      キーはこのデバイスのブラウザ（localStorage）にのみ保存され、外部には送信されません。
-    </div>
-  </div>
-</div>
-
-<script>
-// ============================================================
-// STATE
-// ============================================================
-let appkey = '';
-let searchMode = 'title';
-let selectedBook = null;   // { title, author, publisher, year, isbn }
-let history = [];          // [{ pref, city }, ...] 最大3件
-
-// ============================================================
-// INIT
-// ============================================================
-function init() {
-  appkey = localStorage.getItem('calil_appkey') || '';
-  history = JSON.parse(localStorage.getItem('calil_history') || '[]');
-
-  if (!appkey) {
-    document.getElementById('apiKeyWarning').style.display = 'block';
-  }
-  renderHistory();
-}
-
-// ============================================================
-// SETTINGS
-// ============================================================
-function openSettings() {
-  document.getElementById('apiKeyInput').value = appkey;
-  document.getElementById('settingsOverlay').classList.add('open');
-}
-
-function closeSettings() {
-  document.getElementById('settingsOverlay').classList.remove('open');
-}
-
-function saveSettings() {
-  const val = document.getElementById('apiKeyInput').value.trim();
-  appkey = val;
-  localStorage.setItem('calil_appkey', appkey);
-  document.getElementById('apiKeyWarning').style.display = appkey ? 'none' : 'block';
-  closeSettings();
-}
-
-// ============================================================
-// TAB
-// ============================================================
-function switchTab(mode) {
-  searchMode = mode;
-  document.getElementById('tabTitle').classList.toggle('active', mode === 'title');
-  document.getElementById('tabISBN').classList.toggle('active', mode === 'isbn');
-  const ph = mode === 'title' ? '書名・著者名を入力' : 'ISBN（13桁または10桁）';
-  document.getElementById('searchInput').placeholder = ph;
-  document.getElementById('searchInput').value = '';
-  document.getElementById('bookResults').innerHTML = '';
-  document.getElementById('step2Card').style.display = 'none';
-  document.getElementById('step3Card').style.display = 'none';
-  selectedBook = null;
-  setDot('dot1', 'active');
-  setDot('dot2', 'idle');
-  setDot('dot3', 'idle');
-}
-
-// ============================================================
-// STEP 1: 本を検索
-// ============================================================
-async function searchBooks() {
-  if (!appkey) { openSettings(); return; }
-  const q = document.getElementById('searchInput').value.trim();
-  if (!q) return;
-
-  const btn = document.getElementById('searchBtn');
-  btn.disabled = true;
-  btn.textContent = '…';
-
-  const el = document.getElementById('bookResults');
-  el.innerHTML = '<div class="message"><span class="spinner"></span>検索中…</div>';
-
-  try {
-    if (searchMode === 'isbn') {
-      const isbn = q.replace(/-/g, '');
-      const res = await fetch(`https://api.openbd.jp/v1/get?isbn=${isbn}`);
-      const data = await res.json();
-      const item = data[0];
-
-      if (item && item.summary) {
-        const s = item.summary;
-        selectBook({
-          title: s.title || '（タイトル不明）',
-          author: s.author || '',
-          publisher: s.publisher || '',
-          year: s.pubdate ? s.pubdate.substring(0, 4) : '',
-          isbn
-        });
-        el.innerHTML = '';
-      } else {
-        el.innerHTML = `<div class="error-msg">ISBN「${esc(q)}」の書誌情報が見つかりませんでした。<br>直接図書館検索に進む場合はISBNを確認してください。</div>`;
-        // Even if not found in OpenBD, allow user to proceed with the ISBN
-        const proceed = document.createElement('div');
-        proceed.style.marginTop = '0.7rem';
-        proceed.innerHTML = `<button class="btn btn-amber" onclick="forceSelectISBN('${isbn}')">このISBNで図書館を検索する</button>`;
-        el.appendChild(proceed);
+      if (!appkey) {
+        document.getElementById('apiKeyWarning').style.display = 'block';
       }
-    } else {
-      // Google Books API
-      const url = `https://www.googleapis.com/books/v1/volumes?q=${encodeURIComponent(q)}&maxResults=15&langRestrict=ja`;
-      const res = await fetch(url);
-      const data = await res.json();
+      renderHistory();
+    }
 
-      if (!data.items || data.items.length === 0) {
-        el.innerHTML = `<div class="error-msg">「${esc(q)}」の検索結果がありませんでした。別のキーワードをお試しください。</div>`;
-        return;
-      }
+    // ============================================================
+    // SETTINGS
+    // ============================================================
+    function openSettings() {
+      document.getElementById('apiKeyInput').value = appkey;
+      document.getElementById('settingsOverlay').classList.add('open');
+    }
 
-      const books = [];
-      for (const item of data.items) {
-        const v = item.volumeInfo || {};
-        const ids = v.industryIdentifiers || [];
-        const isbn13 = ids.find(i => i.type === 'ISBN_13')?.identifier;
-        const isbn10 = ids.find(i => i.type === 'ISBN_10')?.identifier;
-        const isbn = isbn13 || isbn10;
-        if (!isbn) continue;
-        books.push({
-          title: v.title || '',
-          author: (v.authors || []).join(', '),
-          publisher: v.publisher || '',
-          year: v.publishedDate?.substring(0, 4) || '',
-          isbn
-        });
-      }
+    function closeSettings() {
+      document.getElementById('settingsOverlay').classList.remove('open');
+    }
 
-      if (books.length === 0) {
-        el.innerHTML = `<div class="error-msg">ISBN情報を持つ本が見つかりませんでした。<br>ISBNタブから直接入力もお試しください。</div>`;
-        return;
-      }
+    function saveSettings() {
+      const val = document.getElementById('apiKeyInput').value.trim();
+      appkey = val;
+      localStorage.setItem('calil_appkey', appkey);
+      document.getElementById('apiKeyWarning').style.display = appkey ? 'none' : 'block';
+      closeSettings();
+    }
 
-      el.innerHTML = '<div style="margin-top:0.8rem; font-size:0.76rem; color:var(--text-muted); margin-bottom:0.4rem;">確認したい本をタップしてください</div>';
-      const list = document.createElement('div');
-      list.className = 'book-list';
+    // ============================================================
+    // TAB
+    // ============================================================
+    function switchTab(mode) {
+      searchMode = mode;
+      document.getElementById('tabTitle').classList.toggle('active', mode === 'title');
+      document.getElementById('tabISBN').classList.toggle('active', mode === 'isbn');
+      const ph = mode === 'title' ? '書名・著者名を入力' : 'ISBN（13桁または10桁）';
+      document.getElementById('searchInput').placeholder = ph;
+      document.getElementById('searchInput').value = '';
+      document.getElementById('bookResults').innerHTML = '';
+      document.getElementById('step2Card').style.display = 'none';
+      document.getElementById('step3Card').style.display = 'none';
+      selectedBook = null;
+      setDot('dot1', 'active');
+      setDot('dot2', 'idle');
+      setDot('dot3', 'idle');
+    }
 
-      books.forEach(book => {
-        const card = document.createElement('div');
-        card.className = 'book-card';
-        card.innerHTML = `
+    // ============================================================
+    // STEP 1: 本を検索
+    // ============================================================
+    async function searchBooks() {
+      if (!appkey) { openSettings(); return; }
+      const q = document.getElementById('searchInput').value.trim();
+      if (!q) return;
+
+      const btn = document.getElementById('searchBtn');
+      btn.disabled = true;
+      btn.textContent = '…';
+
+      const el = document.getElementById('bookResults');
+      el.innerHTML = '<div class="message"><span class="spinner"></span>検索中…</div>';
+
+      try {
+        if (searchMode === 'isbn') {
+          const isbn = q.replace(/-/g, '');
+          const res = await fetch(`https://api.openbd.jp/v1/get?isbn=${isbn}`);
+          const data = await res.json();
+          const item = data[0];
+
+          if (item && item.summary) {
+            const s = item.summary;
+            selectBook({
+              title: s.title || '（タイトル不明）',
+              author: s.author || '',
+              publisher: s.publisher || '',
+              year: s.pubdate ? s.pubdate.substring(0, 4) : '',
+              isbn
+            });
+            el.innerHTML = '';
+          } else {
+            el.innerHTML = `<div class="error-msg">ISBN「${esc(q)}」の書誌情報が見つかりませんでした。<br>直接図書館検索に進む場合はISBNを確認してください。</div>`;
+            // Even if not found in OpenBD, allow user to proceed with the ISBN
+            const proceed = document.createElement('div');
+            proceed.style.marginTop = '0.7rem';
+            proceed.innerHTML = `<button class="btn btn-amber" onclick="forceSelectISBN('${isbn}')">このISBNで図書館を検索する</button>`;
+            el.appendChild(proceed);
+          }
+        } else {
+          // Google Books API
+          const url = `https://www.googleapis.com/books/v1/volumes?q=${encodeURIComponent(q)}&maxResults=15&langRestrict=ja`;
+          const res = await fetch(url);
+          const data = await res.json();
+
+          if (!data.items || data.items.length === 0) {
+            el.innerHTML = `<div class="error-msg">「${esc(q)}」の検索結果がありませんでした。別のキーワードをお試しください。</div>`;
+            return;
+          }
+
+          const books = [];
+          for (const item of data.items) {
+            const v = item.volumeInfo || {};
+            const ids = v.industryIdentifiers || [];
+            const isbn13 = ids.find(i => i.type === 'ISBN_13')?.identifier;
+            const isbn10 = ids.find(i => i.type === 'ISBN_10')?.identifier;
+            const isbn = isbn13 || isbn10;
+            if (!isbn) continue;
+            books.push({
+              title: v.title || '',
+              author: (v.authors || []).join(', '),
+              publisher: v.publisher || '',
+              year: v.publishedDate?.substring(0, 4) || '',
+              isbn
+            });
+          }
+
+          if (books.length === 0) {
+            el.innerHTML = `<div class="error-msg">ISBN情報を持つ本が見つかりませんでした。<br>ISBNタブから直接入力もお試しください。</div>`;
+            return;
+          }
+
+          el.innerHTML = '<div style="margin-top:0.8rem; font-size:0.76rem; color:var(--text-muted); margin-bottom:0.4rem;">確認したい本をタップしてください</div>';
+          const list = document.createElement('div');
+          list.className = 'book-list';
+
+          books.forEach(book => {
+            const card = document.createElement('div');
+            card.className = 'book-card';
+            card.innerHTML = `
           <div class="book-icon">📖</div>
           <div class="book-info">
             <div class="book-title">${esc(book.title)}</div>
@@ -736,288 +822,292 @@ async function searchBooks() {
             <div class="book-isbn">ISBN: ${book.isbn}</div>
           </div>
         `;
-        card.addEventListener('click', () => {
-          document.querySelectorAll('.book-card').forEach(c => c.classList.remove('selected'));
-          card.classList.add('selected');
-          selectBook(book);
-        });
-        list.appendChild(card);
+            card.addEventListener('click', () => {
+              document.querySelectorAll('.book-card').forEach(c => c.classList.remove('selected'));
+              card.classList.add('selected');
+              selectBook(book);
+            });
+            list.appendChild(card);
+          });
+
+          el.appendChild(list);
+        }
+      } catch (err) {
+        el.innerHTML = `<div class="error-msg">エラーが発生しました: ${esc(err.message)}</div>`;
+      } finally {
+        btn.disabled = false;
+        btn.textContent = '検索';
+      }
+    }
+
+    function forceSelectISBN(isbn) {
+      selectBook({ title: `ISBN: ${isbn}`, author: '', publisher: '', year: '', isbn });
+      document.getElementById('bookResults').innerHTML = '';
+    }
+
+    function selectBook(book) {
+      selectedBook = book;
+      setDot('dot1', 'done');
+      setDot('dot2', 'active');
+      document.getElementById('step2Card').style.display = 'block';
+      renderHistory();
+      document.getElementById('step2Card').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    // ============================================================
+    // JSONP ユーティリティ（file:// でも動作）
+    // ============================================================
+    let _jsonpCounter = 0;
+
+    function jsonp(url) {
+      return new Promise((resolve, reject) => {
+        const cbName = `_calilCb${_jsonpCounter++}`;
+        const script = document.createElement('script');
+        const timer = setTimeout(() => {
+          cleanup();
+          reject(new Error('JSONP timeout'));
+        }, 15000);
+
+        function cleanup() {
+          clearTimeout(timer);
+          delete window[cbName];
+          if (script.parentNode) script.parentNode.removeChild(script);
+        }
+
+        window[cbName] = (data) => {
+          cleanup();
+          resolve(data);
+        };
+
+        script.src = url + (url.includes('?') ? '&' : '?') + `callback=${cbName}`;
+        script.onerror = () => { cleanup(); reject(new Error('JSONP読み込み失敗')); };
+        document.head.appendChild(script);
       });
-
-      el.appendChild(list);
-    }
-  } catch (err) {
-    el.innerHTML = `<div class="error-msg">エラーが発生しました: ${esc(err.message)}</div>`;
-  } finally {
-    btn.disabled = false;
-    btn.textContent = '検索';
-  }
-}
-
-function forceSelectISBN(isbn) {
-  selectBook({ title: `ISBN: ${isbn}`, author: '', publisher: '', year: '', isbn });
-  document.getElementById('bookResults').innerHTML = '';
-}
-
-function selectBook(book) {
-  selectedBook = book;
-  setDot('dot1', 'done');
-  setDot('dot2', 'active');
-  document.getElementById('step2Card').style.display = 'block';
-  renderHistory();
-  document.getElementById('step2Card').scrollIntoView({ behavior: 'smooth', block: 'start' });
-}
-
-// ============================================================
-// JSONP ユーティリティ（file:// でも動作）
-// ============================================================
-let _jsonpCounter = 0;
-
-function jsonp(url) {
-  return new Promise((resolve, reject) => {
-    const cbName = `_calilCb${_jsonpCounter++}`;
-    const script = document.createElement('script');
-    const timer = setTimeout(() => {
-      cleanup();
-      reject(new Error('JSONP timeout'));
-    }, 15000);
-
-    function cleanup() {
-      clearTimeout(timer);
-      delete window[cbName];
-      if (script.parentNode) script.parentNode.removeChild(script);
     }
 
-    window[cbName] = (data) => {
-      cleanup();
-      resolve(data);
-    };
+    // ============================================================
+    // 都道府県・市区町村の分割
+    // ============================================================
+    function parsePrefCity(input) {
+      const s = input.replace(/\s+/g, '');
+      // 「東京都」「大阪府」「京都府」「北海道」＋残り
+      const m = s.match(/^(.+?[都道府県])(.*)/);
+      if (m) return { pref: m[1], city: m[2] };
+      return { pref: '', city: s };
+    }
 
-    script.src = url + (url.includes('?') ? '&' : '?') + `callback=${cbName}`;
-    script.onerror = () => { cleanup(); reject(new Error('JSONP読み込み失敗')); };
-    document.head.appendChild(script);
-  });
-}
+    // ============================================================
+    // STEP 2: 図書館を検索
+    // ============================================================
+    function renderHistory() {
+      const el = document.getElementById('historyArea');
+      if (!history.length) { el.innerHTML = ''; return; }
 
-// ============================================================
-// 都道府県・市区町村の分割
-// ============================================================
-function parsePrefCity(input) {
-  const s = input.replace(/\s+/g, '');
-  // 「東京都」「大阪府」「京都府」「北海道」＋残り
-  const m = s.match(/^(.+?[都道府県])(.*)/);
-  if (m) return { pref: m[1], city: m[2] };
-  return { pref: '', city: s };
-}
-
-// ============================================================
-// STEP 2: 図書館を検索
-// ============================================================
-function renderHistory() {
-  const el = document.getElementById('historyArea');
-  if (!history.length) { el.innerHTML = ''; return; }
-
-  el.innerHTML = `
+      el.innerHTML = `
     <div class="chip-label">最近検索した自治体</div>
     <div class="chips">${history.map(h =>
-      `<span class="chip" onclick="useHistory('${esc(h.pref)}','${esc(h.city)}')">${esc(h.pref)}${h.city ? esc(h.city) : ''}</span>`
-    ).join('')}</div>
+        `<span class="chip" onclick="useHistory('${esc(h.pref)}','${esc(h.city)}')">${esc(h.pref)}${h.city ? esc(h.city) : ''}</span>`
+      ).join('')}</div>
   `;
-}
-
-function useHistory(pref, city) {
-  document.getElementById('cityInput').value = `${pref}${city}`;
-  searchLibraries();
-}
-
-async function searchLibraries() {
-  if (!selectedBook) { alert('先に本を選んでください。'); return; }
-  if (!appkey) { openSettings(); return; }
-
-  const input = document.getElementById('cityInput').value.trim();
-  if (!input) return;
-
-  // 正規表現で都道府県と市区町村を正確に分割
-  const { pref, city } = parsePrefCity(input);
-
-  const btn = document.getElementById('libBtn');
-  btn.disabled = true;
-  btn.textContent = '…';
-
-  const libEl = document.getElementById('libResults');
-  libEl.innerHTML = '<div class="message"><span class="spinner"></span>図書館を検索中…</div>';
-
-  try {
-    let url = `https://api.calil.jp/library?appkey=${appkey}&format=json`;
-    if (pref) url += `&pref=${encodeURIComponent(pref)}`;
-    if (city) url += `&city=${encodeURIComponent(city)}`;
-
-    const libs = await jsonp(url);
-
-    if (!libs || !libs.length) {
-      libEl.innerHTML = '<div class="error-msg">図書館が見つかりませんでした。<br>都道府県名と市区町村名を正確に入力してください。<br>例：「東京都練馬区」「東京都調布市」「京都府京都市」</div>';
-      return;
     }
 
-    // システムIDでグループ化
-    const systems = {};
-    libs.forEach(lib => {
-      if (!systems[lib.systemid]) {
-        systems[lib.systemid] = { systemid: lib.systemid, name: lib.systemname };
+    function useHistory(pref, city) {
+      document.getElementById('cityInput').value = `${pref}${city}`;
+      searchLibraries();
+    }
+
+    async function searchLibraries() {
+      if (!selectedBook) { alert('先に本を選んでください。'); return; }
+      if (!appkey) { openSettings(); return; }
+
+      const input = document.getElementById('cityInput').value.trim();
+      if (!input) return;
+
+      // 正規表現で都道府県と市区町村を正確に分割
+      const { pref, city } = parsePrefCity(input);
+
+      const btn = document.getElementById('libBtn');
+      btn.disabled = true;
+      btn.textContent = '…';
+
+      const libEl = document.getElementById('libResults');
+      libEl.innerHTML = '<div class="message"><span class="spinner"></span>図書館を検索中…</div>';
+
+      try {
+        let url = `https://api.calil.jp/library?appkey=${appkey}&format=json`;
+        if (pref) url += `&pref=${encodeURIComponent(pref)}`;
+        if (city) url += `&city=${encodeURIComponent(city)}`;
+
+        const libs = await jsonp(url);
+
+        if (!libs || !libs.length) {
+          libEl.innerHTML = '<div class="error-msg">図書館が見つかりませんでした。<br>都道府県名と市区町村名を正確に入力してください。<br>例：「東京都練馬区」「東京都調布市」「京都府京都市」</div>';
+          return;
+        }
+
+        // システムIDでグループ化
+        const systems = {};
+        libs.forEach(lib => {
+          if (!systems[lib.systemid]) {
+            systems[lib.systemid] = { systemid: lib.systemid, name: lib.systemname };
+          }
+        });
+
+        const systemList = Object.values(systems);
+        libEl.innerHTML = `<div style="margin-top:0.75rem; font-size:0.78rem; color:var(--text-muted);">${systemList.length}件の図書館システムを確認します…</div>`;
+
+        // 履歴を保存
+        addHistory(pref, city);
+
+        // STEP 3 へ
+        setDot('dot2', 'done');
+        setDot('dot3', 'active');
+        document.getElementById('step3Card').style.display = 'block';
+        document.getElementById('selectedBookBanner').innerHTML =
+          `📖 <strong>${esc(selectedBook.title)}</strong>${selectedBook.author ? ' / ' + esc(selectedBook.author) : ''}<br>
+        <span style="font-size:0.75rem;">ISBN: ${selectedBook.isbn}</span>
+        <div style="margin-top: 0.5rem; border-top: 1px dashed var(--border); padding-top: 0.5rem;">
+          <a href="https://calil.jp/book/${selectedBook.isbn}" target="_blank" style="color: var(--amber); font-size: 0.78rem; text-decoration: none; font-weight: 500;">↗ カーリルでこの本の詳細を見る</a>
+        </div>`;
+        document.getElementById('availResults').innerHTML =
+          '<div class="message"><span class="spinner"></span>蔵書を照会中…（数秒かかります）</div>';
+        document.getElementById('step3Card').scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+        // 蔵書確認
+        const systemids = systemList.map(s => s.systemid).join(',');
+        await checkAvailability(selectedBook.isbn, systemids, systemList);
+
+      } catch (err) {
+        libEl.innerHTML = `<div class="error-msg">エラー: ${esc(err.message)}<br>APIキーが正しいか確認してください。</div>`;
+      } finally {
+        btn.disabled = false;
+        btn.textContent = '検索';
       }
-    });
-
-    const systemList = Object.values(systems);
-    libEl.innerHTML = `<div style="margin-top:0.75rem; font-size:0.78rem; color:var(--text-muted);">${systemList.length}件の図書館システムを確認します…</div>`;
-
-    // 履歴を保存
-    addHistory(pref, city);
-
-    // STEP 3 へ
-    setDot('dot2', 'done');
-    setDot('dot3', 'active');
-    document.getElementById('step3Card').style.display = 'block';
-    document.getElementById('selectedBookBanner').innerHTML =
-      `📖 <strong>${esc(selectedBook.title)}</strong>${selectedBook.author ? ' / ' + esc(selectedBook.author) : ''}<br>
-       <span style="font-size:0.76rem;">ISBN: ${selectedBook.isbn}</span>`;
-    document.getElementById('availResults').innerHTML =
-      '<div class="message"><span class="spinner"></span>蔵書を照会中…（数秒かかります）</div>';
-    document.getElementById('step3Card').scrollIntoView({ behavior: 'smooth', block: 'start' });
-
-    // 蔵書確認
-    const systemids = systemList.map(s => s.systemid).join(',');
-    await checkAvailability(selectedBook.isbn, systemids, systemList);
-
-  } catch (err) {
-    libEl.innerHTML = `<div class="error-msg">エラー: ${esc(err.message)}<br>APIキーが正しいか確認してください。</div>`;
-  } finally {
-    btn.disabled = false;
-    btn.textContent = '検索';
-  }
-}
-
-function addHistory(pref, city) {
-  const label = pref + city;
-  history = history.filter(h => (h.pref + h.city) !== label);
-  history.unshift({ pref, city });
-  if (history.length > 3) history.pop();
-  localStorage.setItem('calil_history', JSON.stringify(history));
-  renderHistory();
-}
-
-// ============================================================
-// STEP 3: 蔵書確認（JSONP ポーリング）
-// ============================================================
-async function checkAvailability(isbn, systemids, systemList) {
-  const el = document.getElementById('availResults');
-
-  try {
-    let url = `https://api.calil.jp/check?appkey=${appkey}&format=json&isbn=${isbn}&systemid=${encodeURIComponent(systemids)}`;
-    let data = await jsonp(url);
-    let tries = 0;
-
-    while (data.continue === 1 && tries < 12) {
-      await sleep(2500);
-      el.innerHTML = `<div class="message"><span class="spinner"></span>照会中… (${tries + 1}/12)</div>`;
-      const pollUrl = `https://api.calil.jp/check?appkey=${appkey}&format=json&isbn=${isbn}&systemid=${encodeURIComponent(systemids)}&session=${data.session}`;
-      data = await jsonp(pollUrl);
-      tries++;
     }
 
-    renderAvailability(data, systemList);
+    function addHistory(pref, city) {
+      const label = pref + city;
+      history = history.filter(h => (h.pref + h.city) !== label);
+      history.unshift({ pref, city });
+      if (history.length > 3) history.pop();
+      localStorage.setItem('calil_history', JSON.stringify(history));
+      renderHistory();
+    }
 
-  } catch (err) {
-    el.innerHTML = `<div class="error-msg">蔵書確認中にエラーが発生しました: ${esc(err.message)}</div>`;
-  }
-}
+    // ============================================================
+    // STEP 3: 蔵書確認（JSONP ポーリング）
+    // ============================================================
+    async function checkAvailability(isbn, systemids, systemList) {
+      const el = document.getElementById('availResults');
 
-function renderAvailability(data, systemList) {
-  const el = document.getElementById('availResults');
-  const books = data.books || {};
-  // ISBNキーは確認済みの本のもの
-  const isbnKey = Object.keys(books)[0];
-  const isbnData = isbnKey ? books[isbnKey] : {};
+      try {
+        let url = `https://api.calil.jp/check?appkey=${appkey}&format=json&isbn=${isbn}&systemid=${encodeURIComponent(systemids)}`;
+        let data = await jsonp(url);
+        let tries = 0;
 
-  el.innerHTML = '';
+        while (data.continue === 1 && tries < 12) {
+          await sleep(2500);
+          el.innerHTML = `<div class="message"><span class="spinner"></span>照会中… (${tries + 1}/12)</div>`;
+          const pollUrl = `https://api.calil.jp/check?appkey=${appkey}&format=json&session=${data.session}`;
+          data = await jsonp(pollUrl);
+          tries++;
+        }
 
-  let anyResult = false;
+        renderAvailability(data, systemList);
 
-  systemList.forEach(sys => {
-    const sysData = isbnData[sys.systemid];
-    if (!sysData) return;
+      } catch (err) {
+        el.innerHTML = `<div class="error-msg">蔵書確認中にエラーが発生しました: ${esc(err.message)}</div>`;
+      }
+    }
 
-    anyResult = true;
+    function renderAvailability(data, systemList) {
+      const el = document.getElementById('availResults');
+      const books = data.books || {};
+      // ISBNキーは確認済みの本のもの
+      const isbnKey = Object.keys(books)[0];
+      const isbnData = isbnKey ? books[isbnKey] : {};
 
-    const block = document.createElement('div');
-    block.className = 'sys-block';
+      el.innerHTML = '';
 
-    const status = sysData.status;
-    const libkeys = sysData.libkey || {};
-    const reserveUrl = sysData.reserveurl || '';
+      let anyResult = false;
 
-    let bodyHtml = '';
+      systemList.forEach(sys => {
+        const sysData = isbnData[sys.systemid];
+        if (!sysData) return;
 
-    if (status === 'No') {
-      bodyHtml = '<span class="badge badge-none">この図書館システムには蔵書なし</span>';
-    } else if (status === 'Error' || status === 'Cache') {
-      bodyHtml = '<span class="badge badge-none">情報を取得できませんでした</span>';
-    } else if (Object.keys(libkeys).length > 0) {
-      bodyHtml = Object.entries(libkeys).map(([libName, libStatus]) => {
-        let cls = 'badge-other';
-        if (libStatus === '蔵書あり') cls = 'badge-ok';
-        else if (libStatus === '貸出中') cls = 'badge-out';
-        else if (libStatus === '蔵書なし') cls = 'badge-none';
+        anyResult = true;
 
-        return `<div class="lib-row">
+        const block = document.createElement('div');
+        block.className = 'sys-block';
+
+        const status = sysData.status;
+        const libkeys = sysData.libkey || {};
+        const reserveUrl = sysData.reserveurl || '';
+
+        let bodyHtml = '';
+
+        if (status === 'Error') {
+          bodyHtml = '<span class="badge badge-none">システムエラーにより取得できませんでした</span>';
+        } else if (Object.keys(libkeys).length > 0) {
+          bodyHtml = Object.entries(libkeys).map(([libName, libStatus]) => {
+            let cls = 'badge-other';
+            if (libStatus === '蔵書あり' || libStatus === '貸出可') cls = 'badge-ok';
+            else if (libStatus === '貸出中' || libStatus === '予約中') cls = 'badge-out';
+            else if (libStatus === '蔵書なし') cls = 'badge-none';
+
+            return `<div class="lib-row">
           <span class="lib-name">${esc(libName)}</span>
           <span class="badge ${cls}">${esc(libStatus)}</span>
         </div>`;
-      }).join('');
-    } else {
-      bodyHtml = '<span class="badge badge-none">蔵書情報なし</span>';
-    }
+          }).join('');
+        } else if (status === 'Running') {
+          bodyHtml = '<span class="badge badge-none">タイムアウトにより取得完了しませんでした</span>';
+        } else {
+          bodyHtml = '<span class="badge badge-none">この図書館システムには蔵書がありません</span>';
+        }
 
-    block.innerHTML = `
+        block.innerHTML = `
       <div class="sys-name">${esc(sys.name)}</div>
       ${bodyHtml}
       ${reserveUrl ? `<a class="reserve-link" href="${esc(reserveUrl)}" target="_blank">→ 予約・詳細を確認する</a>` : ''}
     `;
 
-    el.appendChild(block);
-  });
+        el.appendChild(block);
+      });
 
-  if (!anyResult) {
-    el.innerHTML = '<div class="message">蔵書情報を取得できませんでした。<br>APIキーや自治体名を確認してください。</div>';
-  }
-}
+      if (!anyResult) {
+        el.innerHTML = '<div class="message">蔵書情報を取得できませんでした。<br>APIキーや自治体名を確認してください。</div>';
+      }
+    }
 
-// ============================================================
-// UTILS
-// ============================================================
-function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
+    // ============================================================
+    // UTILS
+    // ============================================================
+    function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
 
-function esc(str) {
-  return String(str)
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#39;');
-}
+    function esc(str) {
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+    }
 
-function setDot(id, state) {
-  const el = document.getElementById(id);
-  if (!el) return;
-  el.className = 'step-dot';
-  if (state === 'active') el.classList.add('step-dot-active');
-  else if (state === 'done') el.classList.add('step-dot-done');
-  else el.classList.add('step-dot-idle');
-}
+    function setDot(id, state) {
+      const el = document.getElementById(id);
+      if (!el) return;
+      el.className = 'step-dot';
+      if (state === 'active') el.classList.add('step-dot-active');
+      else if (state === 'done') el.classList.add('step-dot-done');
+      else el.classList.add('step-dot-idle');
+    }
 
-// ============================================================
-// START
-// ============================================================
-init();
-</script>
+    // ============================================================
+    // START
+    // ============================================================
+    init();
+  </script>
 </body>
+
 </html>
