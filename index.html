@@ -848,7 +848,7 @@ async function searchLibraries() {
   libEl.innerHTML = '<div class="message"><span class="spinner"></span>図書館を検索中…</div>';
 
   try {
-    let url = `https://api.calil.jp/library?appkey=${appkey}`;
+    let url = `https://api.calil.jp/library?appkey=${appkey}&format=json`;
     if (pref) url += `&pref=${encodeURIComponent(pref)}`;
     if (city) url += `&city=${encodeURIComponent(city)}`;
 
@@ -912,14 +912,14 @@ async function checkAvailability(isbn, systemids, systemList) {
   const el = document.getElementById('availResults');
 
   try {
-    let url = `https://api.calil.jp/check?appkey=${appkey}&isbn=${isbn}&systemid=${encodeURIComponent(systemids)}`;
+    let url = `https://api.calil.jp/check?appkey=${appkey}&format=json&isbn=${isbn}&systemid=${encodeURIComponent(systemids)}`;
     let data = await jsonp(url);
     let tries = 0;
 
     while (data.continue === 1 && tries < 12) {
       await sleep(2500);
       el.innerHTML = `<div class="message"><span class="spinner"></span>照会中… (${tries + 1}/12)</div>`;
-      const pollUrl = `https://api.calil.jp/check?appkey=${appkey}&isbn=${isbn}&systemid=${encodeURIComponent(systemids)}&session=${data.session}`;
+      const pollUrl = `https://api.calil.jp/check?appkey=${appkey}&format=json&isbn=${isbn}&systemid=${encodeURIComponent(systemids)}&session=${data.session}`;
       data = await jsonp(pollUrl);
       tries++;
     }
