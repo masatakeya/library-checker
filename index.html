@@ -772,35 +772,51 @@
             el.innerHTML = '';
           }
         } else {
-          // Google Books API
-          const url = `https://www.googleapis.com/books/v1/volumes?q=${encodeURIComponent(q)}&maxResults=15&langRestrict=ja`;
-          const res = await fetch(url);
-          const data = await res.json();
+          // 国立国会図書館サーチAPI (OpenSearch)
+          const ndlUrl = `https://ndlsearch.ndl.go.jp/api/opensearch?title=${encodeURIComponent(q)}&cnt=20`;
+          const ndlCtrl = new AbortController();
+          const ndlTimer = setTimeout(() => ndlCtrl.abort(), 8000);
+          const res = await fetch(ndlUrl, { signal: ndlCtrl.signal });
+          clearTimeout(ndlTimer);
+          const xmlText = await res.text();
+          const doc = new DOMParser().parseFromString(xmlText, 'application/xml');
+          const items = doc.querySelectorAll('item');
 
-          if (!data.items || data.items.length === 0) {
-            el.innerHTML = `<div class="error-msg">「${esc(q)}」の検索結果がありませんでした。別のキーワードをお試しください。</div>`;
-            return;
-          }
-
+          const DC = 'http://purl.org/dc/elements/1.1/';
+          const XSI = 'http://www.w3.org/2001/XMLSchema-instance';
           const books = [];
-          for (const item of data.items) {
-            const v = item.volumeInfo || {};
-            const ids = v.industryIdentifiers || [];
-            const isbn13 = ids.find(i => i.type === 'ISBN_13')?.identifier;
-            const isbn10 = ids.find(i => i.type === 'ISBN_10')?.identifier;
-            const isbn = isbn13 || isbn10;
-            if (!isbn) continue;
-            books.push({
-              title: v.title || '',
-              author: (v.authors || []).join(', '),
-              publisher: v.publisher || '',
-              year: v.publishedDate?.substring(0, 4) || '',
-              isbn
-            });
-          }
+          items.forEach(item => {
+            // dc:identifier のうち xsi:type に ISBN を含むものを探す
+            let isbn = '';
+            const ids = item.getElementsByTagNameNS(DC, 'identifier');
+            for (let i = 0; i < ids.length; i++) {
+              const type = ids[i].getAttributeNS(XSI, 'type') || '';
+              if (type.includes('ISBN')) {
+                isbn = (ids[i].textContent || '').replace(/-/g, '');
+                break;
+              }
+            }
+            if (!isbn) return;
+
+            const title = (item.querySelector('title')?.textContent || '').trim();
+            // dc:creator は「姓, 名, 生年-」形式なので整形
+            const creators = [];
+            const crEls = item.getElementsByTagNameNS(DC, 'creator');
+            for (let i = 0; i < crEls.length; i++) {
+              const name = (crEls[i].textContent || '').replace(/,\s*\d{4}-.*$/, '').replace(/,\s*/g, ' ').trim();
+              if (name) creators.push(name);
+            }
+            const author = creators.join(', ');
+            const pubEls = item.getElementsByTagNameNS(DC, 'publisher');
+            const publisher = pubEls.length > 0 ? (pubEls[0].textContent || '').trim() : '';
+            const pubDate = item.querySelector('pubDate')?.textContent || '';
+            const year = pubDate ? new Date(pubDate).getFullYear().toString() : '';
+
+            books.push({ title, author, publisher, year, isbn });
+          });
 
           if (books.length === 0) {
-            el.innerHTML = `<div class="error-msg">ISBN情報を持つ本が見つかりませんでした。<br>ISBNタブから直接入力もお試しください。</div>`;
+            el.innerHTML = `<div class="error-msg">「${esc(q)}」の検索結果がありませんでした。別のキーワードをお試しください。</div>`;
             return;
           }
 
