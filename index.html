@@ -773,47 +773,11 @@
           }
         } else {
           // 国立国会図書館サーチAPI (OpenSearch)
-          const ndlUrl = `https://ndlsearch.ndl.go.jp/api/opensearch?title=${encodeURIComponent(q)}&cnt=20`;
-          const ndlCtrl = new AbortController();
-          const ndlTimer = setTimeout(() => ndlCtrl.abort(), 8000);
-          const res = await fetch(ndlUrl, { signal: ndlCtrl.signal });
-          clearTimeout(ndlTimer);
-          const xmlText = await res.text();
-          const doc = new DOMParser().parseFromString(xmlText, 'application/xml');
-          const items = doc.querySelectorAll('item');
-
-          const DC = 'http://purl.org/dc/elements/1.1/';
-          const XSI = 'http://www.w3.org/2001/XMLSchema-instance';
-          const books = [];
-          items.forEach(item => {
-            // dc:identifier のうち xsi:type に ISBN を含むものを探す
-            let isbn = '';
-            const ids = item.getElementsByTagNameNS(DC, 'identifier');
-            for (let i = 0; i < ids.length; i++) {
-              const type = ids[i].getAttributeNS(XSI, 'type') || '';
-              if (type.includes('ISBN')) {
-                isbn = (ids[i].textContent || '').replace(/-/g, '');
-                break;
-              }
-            }
-            if (!isbn) return;
-
-            const title = (item.querySelector('title')?.textContent || '').trim();
-            // dc:creator は「姓, 名, 生年-」形式なので整形
-            const creators = [];
-            const crEls = item.getElementsByTagNameNS(DC, 'creator');
-            for (let i = 0; i < crEls.length; i++) {
-              const name = (crEls[i].textContent || '').replace(/,\s*\d{4}-.*$/, '').replace(/,\s*/g, ' ').trim();
-              if (name) creators.push(name);
-            }
-            const author = creators.join(', ');
-            const pubEls = item.getElementsByTagNameNS(DC, 'publisher');
-            const publisher = pubEls.length > 0 ? (pubEls[0].textContent || '').trim() : '';
-            const pubDate = item.querySelector('pubDate')?.textContent || '';
-            const year = pubDate ? new Date(pubDate).getFullYear().toString() : '';
-
-            books.push({ title, author, publisher, year, isbn });
-          });
+          // まずタイトルで検索し、ISBN付き結果がなければ著者名で再検索
+          let books = await searchNDL(`title=${encodeURIComponent(q)}`);
+          if (books.length === 0) {
+            books = await searchNDL(`creator=${encodeURIComponent(q)}`);
+          }
 
           if (books.length === 0) {
             el.innerHTML = `<div class="error-msg">「${esc(q)}」の検索結果がありませんでした。別のキーワードをお試しください。</div>`;
@@ -851,6 +815,49 @@
         btn.disabled = false;
         btn.textContent = '検索';
       }
+    }
+
+    async function searchNDL(params) {
+      const url = `https://ndlsearch.ndl.go.jp/api/opensearch?${params}&cnt=20`;
+      const ctrl = new AbortController();
+      const timer = setTimeout(() => ctrl.abort(), 8000);
+      const res = await fetch(url, { signal: ctrl.signal });
+      clearTimeout(timer);
+      const xmlText = await res.text();
+      const doc = new DOMParser().parseFromString(xmlText, 'application/xml');
+      const items = doc.querySelectorAll('item');
+
+      const DC = 'http://purl.org/dc/elements/1.1/';
+      const XSI = 'http://www.w3.org/2001/XMLSchema-instance';
+      const books = [];
+      items.forEach(item => {
+        let isbn = '';
+        const ids = item.getElementsByTagNameNS(DC, 'identifier');
+        for (let i = 0; i < ids.length; i++) {
+          const type = ids[i].getAttributeNS(XSI, 'type') || '';
+          if (type.includes('ISBN')) {
+            isbn = (ids[i].textContent || '').replace(/-/g, '');
+            break;
+          }
+        }
+        if (!isbn) return;
+
+        const title = (item.querySelector('title')?.textContent || '').trim();
+        const creators = [];
+        const crEls = item.getElementsByTagNameNS(DC, 'creator');
+        for (let i = 0; i < crEls.length; i++) {
+          const name = (crEls[i].textContent || '').replace(/,\s*\d{4}-.*$/, '').replace(/,\s*/g, ' ').trim();
+          if (name) creators.push(name);
+        }
+        const author = creators.join(', ');
+        const pubEls = item.getElementsByTagNameNS(DC, 'publisher');
+        const publisher = pubEls.length > 0 ? (pubEls[0].textContent || '').trim() : '';
+        const pubDate = item.querySelector('pubDate')?.textContent || '';
+        const year = pubDate ? new Date(pubDate).getFullYear().toString() : '';
+
+        books.push({ title, author, publisher, year, isbn });
+      });
+      return books;
     }
 
     function selectBook(book) {
