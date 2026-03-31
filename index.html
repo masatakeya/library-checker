@@ -682,8 +682,7 @@
     // INIT
     // ============================================================
     function init() {
-      // localStorageを優先し、なければ config.js (もしあれば) の値をフォールバックにする
-      appkey = localStorage.getItem('calil_appkey') || (typeof CONFIG !== 'undefined' ? CONFIG.CALIL_API_KEY : '');
+      appkey = (typeof CONFIG !== 'undefined' && CONFIG.CALIL_API_KEY) ? CONFIG.CALIL_API_KEY : '';
       history = JSON.parse(localStorage.getItem('calil_history') || '[]');
 
       if (!appkey) {
@@ -715,7 +714,7 @@
     // STEP 1: 本を検索
     // ============================================================
     async function searchBooks() {
-      if (!appkey) { openSettings(); return; }
+      if (!appkey) { document.getElementById('apiKeyWarning').style.display = 'block'; return; }
       const q = document.getElementById('searchInput').value.trim();
       if (!q) return;
 
@@ -729,7 +728,14 @@
       try {
         if (searchMode === 'isbn') {
           const isbn = q.replace(/-/g, '');
-          const res = await fetch(`https://api.openbd.jp/v1/get?isbn=${isbn}`);
+          if (!/^(\d{9}[\dX]|\d{13})$/.test(isbn)) {
+            el.innerHTML = '<div class="error-msg">ISBNは10桁または13桁の数字で入力してください。</div>';
+            return;
+          }
+          const obdCtrl = new AbortController();
+          const obdTimer = setTimeout(() => obdCtrl.abort(), 5000);
+          const res = await fetch(`https://api.openbd.jp/v1/get?isbn=${isbn}`, { signal: obdCtrl.signal });
+          clearTimeout(obdTimer);
           const data = await res.json();
           const item = data[0];
 
@@ -829,11 +835,6 @@
         btn.disabled = false;
         btn.textContent = '検索';
       }
-    }
-
-    function forceSelectISBN(isbn) {
-      selectBook({ title: `ISBN: ${isbn}`, author: '', publisher: '', year: '', isbn });
-      document.getElementById('bookResults').innerHTML = '';
     }
 
     function selectBook(book) {
@@ -1082,7 +1083,7 @@
         block.innerHTML = `
       <div class="sys-name">${esc(sys.name)}</div>
       ${bodyHtml}
-      ${reserveUrl ? `<a class="reserve-link" href="${esc(reserveUrl)}" target="_blank">→ 予約・詳細を確認する</a>` : ''}
+      ${reserveUrl && /^https?:\/\//.test(reserveUrl) ? `<a class="reserve-link" href="${esc(reserveUrl)}" target="_blank" rel="noopener">→ 予約・詳細を確認する</a>` : ''}
     `;
 
         el.appendChild(block);
