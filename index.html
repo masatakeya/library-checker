@@ -744,12 +744,22 @@
             });
             el.innerHTML = '';
           } else {
-            el.innerHTML = `<div class="error-msg">ISBN「${esc(q)}」の書誌情報が見つかりませんでした。<br>直接図書館検索に進む場合はISBNを確認してください。</div>`;
-            // Even if not found in OpenBD, allow user to proceed with the ISBN
-            const proceed = document.createElement('div');
-            proceed.style.marginTop = '0.7rem';
-            proceed.innerHTML = `<button class="btn btn-amber" onclick="forceSelectISBN('${isbn}')">このISBNで図書館を検索する</button>`;
-            el.appendChild(proceed);
+            // openBD にデータがない場合、Google Books で書誌情報を補完して図書館検索に進む
+            let bookInfo = { title: '', author: '', publisher: '', year: '', isbn };
+            try {
+              const gbRes = await fetch(`https://www.googleapis.com/books/v1/volumes?q=isbn:${isbn}`);
+              const gbData = await gbRes.json();
+              if (gbData.items && gbData.items.length > 0) {
+                const v = gbData.items[0].volumeInfo;
+                bookInfo.title = v.title || '';
+                bookInfo.author = (v.authors || []).join(', ');
+                bookInfo.publisher = v.publisher || '';
+                bookInfo.year = v.publishedDate ? v.publishedDate.substring(0, 4) : '';
+              }
+            } catch (e) { /* 書誌情報なしで続行 */ }
+
+            selectBook(bookInfo);
+            el.innerHTML = '';
           }
         } else {
           // Google Books API
